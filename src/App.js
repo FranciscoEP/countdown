@@ -1,40 +1,51 @@
 
-import React, { useState, useEffect } from 'react'
+import ReactDOM from "react-dom";
+import { CountdownCircleTimer } from "react-countdown-circle-timer";
 
+import "./styles.css";
 
-const App = () => {
-  const [seconds, setSeconds] = useState(0)
-  const [minutes, setMinutes] = useState(15)
+const formatRemainingTime = time => {
+  const minutes = Math.floor((time % 3600) / 60);
+  const seconds = time % 60;
 
-  const timeRunner = () => {
-    if (minutes == 0 && seconds == 0) {
-      setSeconds(0)
-      setMinutes(15)
+  return `${minutes}:${seconds}`;
+};
 
-    }
-    else {
-      if (seconds == 0) {
-        setMinutes(minutes => minutes - 1)
-        setSeconds(59)
-      }
-      else {
-        setSeconds(seconds=>seconds-1)
-      }
-    }
+const renderTime = ({ remainingTime }) => {
+  if (remainingTime === 0) {
+    return <div className="timer">Too lale...</div>;
   }
 
-  useEffect(() => {
-    const token = setTimeout(timeRunner, 1000)
-    return function reset () {
-      return clearTimeout(token)
-    }
-  })
   return (
-    <div>
-
-      <span>{minutes}:{seconds}</span>
+    <div className="timer">
+      <div className="text">Remaining time</div>
+      <div className="value">{formatRemainingTime(remainingTime)}</div>
     </div>
-  )
+  );
+};
+
+export default function App() {
+  return (
+    <div className="App">
+      <h1>
+        CountdownCircleTimer
+        <br />
+        React Component
+      </h1>
+      <div className="timer-wrapper">
+        <CountdownCircleTimer
+          isPlaying
+          duration={900}
+          colors={[["#004777", 0.33], ["#F7B801", 0.33], ["#A30000"]]}
+          onComplete={() => [false, 1000]}
+        >
+          {renderTime}
+        </CountdownCircleTimer>
+      </div>
+    
+    </div>
+  );
 }
 
-export default App
+const rootElement = document.getElementById("root");
+ReactDOM.render(<App />, rootElement);
